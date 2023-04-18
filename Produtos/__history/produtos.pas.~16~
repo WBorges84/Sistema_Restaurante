@@ -1,0 +1,170 @@
+unit produtos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.ExtDlgs, System.UITypes;
+
+type
+  TFrmProdutos = class(TForm)
+    Image1: TImage;
+    Label1: TLabel;
+    EdtBuscarNome: TEdit;
+    Label2: TLabel;
+    edtNome: TEdit;
+    Label3: TLabel;
+    grid: TDBGrid;
+    btnNovo: TSpeedButton;
+    btnEditar: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    btnExcluir: TSpeedButton;
+    edtCodigo: TEdit;
+    edtDescricao: TEdit;
+    edtValor: TEdit;
+    Label5: TLabel;
+    edtQuantidade: TEdit;
+    Label4: TLabel;
+    Label6: TLabel;
+    cbFornecedor: TComboBox;
+    img: TImage;
+    btnAddImg: TButton;
+    Dialog: TOpenPictureDialog;
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure gridCellClick(Column: TColumn);
+    procedure btnAddImgClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmProdutos: TFrmProdutos;
+
+implementation
+
+{$R *.dfm}
+
+uses UFuncoes, modulo;
+
+
+procedure carregarImgPadrao();
+var  caminhoImg : String;
+Begin
+  caminhoImg := ExtractFileDir(GetCurrentDir) + '\Debug\semfoto.bmp';
+  FrmProdutos.img.Picture.LoadFromFile(caminhoImg);
+End;
+
+
+procedure TFrmProdutos.btnAddImgClick(Sender: TObject);
+begin
+Dialog.Execute();
+img.Picture.LoadFromFile(Dialog.FileName);
+end;
+
+procedure TFrmProdutos.btnEditarClick(Sender: TObject);
+begin
+  if (Trim(edtNome.Text) <> '') and (Trim(edtDescricao.Text) <> '') then
+  Begin
+    carregarImgPadrao();
+    limparcamposProd;
+    desabilitarcamposProd;
+    btnNovo.Enabled := true;
+    btnEditar.Enabled:= false;
+    btnSalvar.Enabled := true;
+    btnExcluir.Enabled := false;
+    btnAddImg.Enabled := false;
+  End
+  else
+  Begin
+    MessageDlg('Preencha os campos!!', mtInformation, [mbOK], 0);
+  End;
+end;
+
+procedure TFrmProdutos.btnExcluirClick(Sender: TObject);
+begin
+  if MessageDlg('Deseja excluir o registro?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+       if edtCodigo.Text <> '' then
+    Begin
+    carregarImgPadrao();
+    limparcamposProd;
+    desabilitarcamposProd;
+    btnNovo.Enabled := true;
+    btnEditar.Enabled:= false;
+    btnSalvar.Enabled := false;
+    btnExcluir.Enabled := false;
+
+    MessageDlg('Excluido com Sucesso!!', mtInformation, [mbOK], 0);
+
+
+    End;
+
+  end;
+
+end;
+
+procedure TFrmProdutos.btnNovoClick(Sender: TObject);
+begin
+ carregarImgPadrao;
+ limparcamposProd;
+ habilitarcamposProd;
+ btnNovo.Enabled := false;
+ btnEditar.Enabled:= false;
+ btnSalvar.Enabled := true;
+ btnExcluir.Enabled := false;
+ btnAddImg.Enabled := true;
+
+
+end;
+
+procedure TFrmProdutos.btnSalvarClick(Sender: TObject);
+begin
+  if (Trim(edtNome.Text) <> '') and (Trim(edtDescricao.Text) <> '') then
+  Begin
+    carregarImgPadrao();
+    limparcamposProd;
+    desabilitarcamposProd;
+    btnNovo.Enabled := true;
+    btnEditar.Enabled:= false;
+    btnSalvar.Enabled := false;
+    btnExcluir.Enabled := false;
+    MessageDlg('Cadastrado com Sucesso!!', mtInformation, [mbOK], 0);
+  End
+  else
+  Begin
+    MessageDlg('Preencha os campos!!', mtInformation, [mbOK], 0);
+  End;
+
+
+end;
+
+procedure TFrmProdutos.FormCreate(Sender: TObject);
+begin
+  carregarImgPadrao;
+
+end;
+
+procedure TFrmProdutos.FormShow(Sender: TObject);
+begin
+carregarImgPadrao();
+end;
+
+procedure TFrmProdutos.gridCellClick(Column: TColumn);
+begin
+ habilitarcamposProd;
+ btnNovo.Enabled := true;
+ btnEditar.Enabled:= true;
+ btnSalvar.Enabled := false;
+ btnExcluir.Enabled := true;
+end;
+
+end.

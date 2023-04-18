@@ -1,0 +1,141 @@
+unit fornecedores;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Mask, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
+
+type
+  TFrmFornecedores = class(TForm)
+    Image1: TImage;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    btnNovo: TSpeedButton;
+    btnEditar: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    btnExcluir: TSpeedButton;
+    rbNome: TRadioButton;
+    EdtBuscarNome: TEdit;
+    edtNome: TEdit;
+    edtEndereco: TEdit;
+    grid: TDBGrid;
+    edtCodigo: TEdit;
+    edtTel: TMaskEdit;
+    edtMail: TEdit;
+    Label3: TLabel;
+    Label6: TLabel;
+    procedure FormShow(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+  private
+    { Private declarations }
+    procedure assosciarCampos;
+    procedure buscarTudo;
+    procedure buscarNome;
+    procedure limpaCampos;
+    procedure habilitaCampos;
+    procedure desabilitaCampos;
+
+
+  public
+    { Public declarations }
+
+  end;
+
+var
+  FrmFornecedores: TFrmFornecedores;
+
+implementation
+
+{$R *.dfm}
+
+uses modulo;
+
+{ TFrmFornecedores }
+
+procedure TFrmFornecedores.assosciarCampos;
+begin
+ DataModule1.tb_fornecedores.FieldByName('nome').Value := edtNome.Text;
+ DataModule1.tb_fornecedores.FieldByName('telefone').Value := edtTel.Text;
+ DataModule1.tb_fornecedores.FieldByName('emial').Value := edtMail.Text;
+ DataModule1.tb_fornecedores.FieldByName('endereco').Value := edtEndereco.Text;
+end;
+
+procedure TFrmFornecedores.btnNovoClick(Sender: TObject);
+begin
+  habilitaCampos;
+  limpaCampos;
+  btnSalvar.Enabled := true;
+  edtNome.SetFocus;
+
+  DataModule1.tb_fornecedores.Insert;
+
+  btnNovo.Enabled := false;
+  grid.Enabled := false;
+end;
+
+procedure TFrmFornecedores.btnSalvarClick(Sender: TObject);
+begin
+  if (Trim(edtNome.Text)) <> '' then
+  Begin
+   assosciarCampos;
+   DataModule1.tb_fornecedores.Post;
+   MessageDlg('Registro Salvo com sucesso!!', mtWarning, [mbOK], 0);
+  End
+  Else
+  Begin
+  MessageDlg('Campo NOME não pode ser Vazio!!', mtWarning, [mbOK], 0);
+  edtNome.SetFocus;
+
+  End;
+end;
+
+procedure TFrmFornecedores.buscarNome;
+begin
+
+end;
+
+procedure TFrmFornecedores.buscarTudo;
+begin
+
+  DataModule1.QueryForn.Close;
+  DataModule1.QueryForn.SQL.Clear;
+  DataModule1.QueryForn.SQL.Add('select * from fornecedores order by id desc');
+  DataModule1.QueryForn.Open;
+
+end;
+
+procedure TFrmFornecedores.desabilitaCampos;
+begin
+ edtNome.Enabled := false;
+ edtEndereco.Enabled := false;
+ edtTel.Enabled := false;
+ edtMail.Enabled := false;
+end;
+
+procedure TFrmFornecedores.FormShow(Sender: TObject);
+begin
+buscarTudo;
+end;
+
+procedure TFrmFornecedores.habilitaCampos;
+begin
+ edtNome.Enabled := true;
+ edtEndereco.Enabled := true;
+ edtTel.Enabled := true;
+ edtMail.Enabled := true;
+end;
+
+procedure TFrmFornecedores.limpaCampos;
+begin
+ edtNome.Text := '';
+ edtEndereco.Text := '';
+ edtTel.Text := '';
+ edtMail.Text := '';
+end;
+
+end.
